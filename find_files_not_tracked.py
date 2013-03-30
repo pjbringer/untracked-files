@@ -7,13 +7,17 @@ import os.path
 
 import sys
 
+def key(x):
+	return x.replace('/', '\1')
+
 def go_through_files(l, path='/'):
-	while l[0]<path:
+	kpath = key(path)
+	while key(l[0])<kpath:
 		print("Not present: %s" % str(l[0]))
 		l.pop(0)
-	if l[0]>path:
+	if key(l[0])>kpath:
 		print("Not tracked: %s%s" % (path, '/' if os.path.isdir(path) else ''))
-	elif l[0]==path:
+	elif key(l[0])==kpath:
 		#print("Matched %s" % path)
 		l.pop(0)
 		if os.path.isdir(path) and not os.path.islink(path) and not path in ignore:
@@ -29,6 +33,6 @@ if len(sys.argv)!=2:
 	sys.exit(1)
 
 tracked_files = open(sys.argv[1]).read().splitlines()
-tracked_files.sort(key=lambda x: x.replace('/','\1'))
+tracked_files.sort(key=key)
 go_through_files(tracked_files)
 
