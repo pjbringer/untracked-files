@@ -10,16 +10,23 @@ import sys
 def key(x):
 	return x.replace('/', '\1')
 
+# Moves to the next values in the list of expected files
+# Dynamically adds a parent directory if missing
+def advance(l):
+	discarded = l.pop(0)
+	while not discarded.startswith(os.path.dirname(l[0])):
+		l.insert(0, os.path.dirname(l[0]))
+
 def go_through_files(l, path='/'):
 	kpath = key(path)
 	while key(l[0])<kpath:
 		print("Not present: %s" % str(l[0]))
-		l.pop(0)
+		advance(l)
 	if key(l[0])>kpath:
 		print("Not tracked: %s%s" % (path, '/' if os.path.isdir(path) else ''))
 	elif key(l[0])==kpath:
 		#print("Matched %s" % path)
-		l.pop(0)
+		advance(l)
 		if os.path.isdir(path) and not os.path.islink(path) and not path in ignore:
 			children = sorted(os.listdir(path))
 			if path == '/':
