@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-ignore = [ '/dev', '/home', '/proc', '/mnt' , '/sys', '/bin', '/lib', '/sbin', '/lost+found' ]
+ignore = [ '/dev', '/home', '/proc', '/mnt' , '/sys', '/lost+found' ]
 
 import os
 import os.path
