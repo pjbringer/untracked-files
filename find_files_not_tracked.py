@@ -12,16 +12,22 @@ def key(x):
 
 # Moves to the next values in the list of expected files
 # Dynamically adds a parent directory if missing
-def advance(l):
+def advance(l, multiple=False):
 	discarded = l.pop(0)
+	if multiple:
+		while l[0].startswith(discarded):
+			l.pop(0)
 	while not discarded.startswith(os.path.dirname(l[0])):
 		l.insert(0, os.path.dirname(l[0]))
+
+def advance_dir(l):
+	advance(l, True)
 
 def go_through_files(l, path='/'):
 	kpath = key(path)
 	while key(l[0])<kpath:
-		print("Not present: %s" % str(l[0]))
-		advance(l)
+		print("Not present: %s%s" % (str(l[0]), '/' if len(l)>1 and l[1].startswith(l[0]) else ''))
+		advance_dir(l)
 	if key(l[0])>kpath:
 		print("Not tracked: %s%s" % (path, '/' if os.path.isdir(path) else ''))
 	elif key(l[0])==kpath:
