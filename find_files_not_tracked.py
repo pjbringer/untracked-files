@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
-ignore = [ '/dev', '/home', '/proc', '/mnt' , '/sys', '/lost+found' ]
+ignore = [ '/home', '/mnt' , '/lost+found' ]
+blessed_mount_points = ['/' , '/usr']
 
 import os
 import os.path
@@ -9,6 +10,11 @@ import sys
 
 def key(x):
 	return x.replace('/', '\1')
+
+def descendable(path):
+	return path not in ignore and \
+		not os.path.islink(path) and \
+		(not os.path.ismount(path) or path in blessed_mount_points)
 
 # Moves to the next values in the list of expected files
 # Dynamically adds a parent directory if missing
@@ -37,7 +43,7 @@ def go_through_files(l, path='/'):
 	elif key(l[0]) == kpath:
 		#print("Matched %s" % path)
 		advance(l)
-		if os.path.isdir(path) and not os.path.islink(path) and not path in ignore:
+		if os.path.isdir(path) and descendable(path):
 			children = sorted(os.listdir(path))
 			if path == '/':
 				path = ''
